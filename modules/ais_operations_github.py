@@ -1,17 +1,17 @@
 import glob
-import os
-import matplotlib.pyplot as plt
-from haversine import haversine, Unit
 import math
-import pandas as pd
-import numpy as np
+import os
+import random
 
 import cartopy.crs as ccrs
 import cartopy.crs as crs
-import random
-
-from termcolor import colored
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from haversine import Unit, haversine
 from loadbar import LoadBar
+from termcolor import colored
+
 
 class ais_df_process():
     '''
@@ -20,41 +20,6 @@ class ais_df_process():
     '''
     def __init__(self):
         '''
-        self.training_df = None
-        self.testing_df = None
-        self.validation_df = None
-        
-        self.statistics_training = None
-        self.statistics_testing = None
-        self.statistics_validation = None
-        
-        self.training_normalized_df = None
-        self.testing_normalized_df = None
-        self.validation_normalized_df = None
-        
-        self.training_df_dynamic = None
-        self.testing_df_dynamic = None
-        self.validation_df_dynamic = None
-        
-        self.samples_training = []
-        self.samples_validation = []
-        self.samples_testing = []
-
-        self.samples_description = None
-        self.targets_description = None
-
-        self.targets_training = []
-        self.targets_validation = []
-        self.targets_testing = []
-        
-        
-        
-        self.lookback = 5 #timestamp. Time lookback is = lookback*sampling_frq
-        self.lookback_offset = 1 #if starting the count self.lookback_offset steps after first location
-        self.dynamic_data_type = None # Normalized or not. infor
-
-        self.sampling_rate = None #minutsglobal x
-        
         '''
         self.training_df = None
         self.testing_df = None

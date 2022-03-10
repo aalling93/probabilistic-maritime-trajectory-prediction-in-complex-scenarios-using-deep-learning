@@ -574,7 +574,90 @@ class article_model:
         else:
             print('Warning. No testing data')
 
-        
+    def article_blstm_mdn(self):
+        encoder_inputs = Input(shape=(self.inputsize),name='blstm_mdn_input')
+        N_mixers = 11
+        Dropout_val = 0.3
+        x = Bidirectional(LSTM(456, 
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.00001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.000001),
+                            return_sequences=True))(encoder_inputs)
+        x = tf.keras.layers.LeakyReLU(alpha=0.1)(x)
+        x = Dropout(Dropout_val)(x)
+        x = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(x)
+        x = Bidirectional(LSTM(456, 
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.001),
+                            return_sequences=True))(x)
+        x = tf.keras.layers.LeakyReLU(alpha=0.1)(x)
+        x = Dropout(Dropout_val)(x)
+        x = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(x)
+
+
+        y = Bidirectional(LSTM(456,
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.001), 
+                            return_sequences=False))(x)
+        y = tf.keras.layers.LeakyReLU(alpha=0.1)(y)
+        y = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(y)
+        y = Dropout(Dropout_val)(y)
+        y = Bidirectional(LSTM(256,
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.001), 
+                            return_sequences=False))(x)
+        y = tf.keras.layers.LeakyReLU(alpha=0.1)(y)
+        y = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(y)
+        y = Dropout(Dropout_val)(y)
+
+
+        z = Bidirectional(LSTM(456,
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.0001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.0001), 
+                            return_sequences=True))(x)
+        z = tf.keras.layers.LeakyReLU(alpha=0.1)(z)
+        z = Dropout(Dropout_val)(z)
+        z = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(z)
+        z = Bidirectional(LSTM(256,
+                            kernel_initializer = tf.keras.initializers.GlorotNormal(),
+                            kernel_regularizer=tf.keras.regularizers.l1(0.0001),
+                            activity_regularizer=tf.keras.regularizers.l2(0.0001),
+                            return_sequences=False))(z)
+        z = tf.keras.layers.LeakyReLU(alpha=0.1)(z)
+        z = Dropout(Dropout_val)(z)
+        z = BatchNormalization(momentum=0.99, 
+                                        scale=True, 
+                                        center=True,
+                                        trainable=False)(z)
+        pred = Average()([z,y])
+
+        pred = mdn.MDN(self.input_size[1], N_mixers)(pred)
+        name=f"BLSTM_MDN_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}"
+        self.model = Model(inputs=encoder_inputs, outputs=pred,name=name)
+
+
+
+
+
     def model_ablstm(self):
         '''
             Defining a model
